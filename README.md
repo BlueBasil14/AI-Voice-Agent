@@ -76,6 +76,52 @@ A stunning, production-ready AI Voice Agent Dashboard built with React, TypeScri
 - User profile dropdown
 - Notification badge with pulse animation
 
+### Premium Features
+
+#### Toast Notifications
+- Beautiful slide-in notifications for real-time events
+- Custom toast types: success, error, info, call, booking
+- Auto-dismiss with progress bar
+- Manual close button
+- Configurable duration
+- Glassmorphism design matching dashboard theme
+
+#### Confetti Celebrations
+- Particle effects when appointments are booked
+- Multi-colored confetti using brand colors
+- Smooth canvas-based animations
+- Can be toggled in settings
+
+#### Settings Panel
+- Slide-in panel from right side
+- Toggle notifications on/off
+- Enable/disable sound effects (coming soon)
+- Control celebration animations
+- Adjust auto-refresh interval (1-10 seconds)
+- Reset to default settings
+- Persisted to localStorage
+
+#### Keyboard Shortcuts
+- **⌘K** - Open search (coming soon)
+- **⌘,** - Open settings panel
+- **⌘R** - Refresh dashboard data
+- **Shift + ?** - Show keyboard shortcuts help
+- **Esc** - Close dialogs
+- Help modal with all shortcuts listed
+
+#### Loading States
+- Beautiful loading screen on initial load
+- Animated logo with rotation
+- Pulsing text effect
+- Skeleton screens for cards (ready to use)
+
+#### Real-time Event Detection
+- Automatically detect new incoming calls
+- Show toast notification with caller name
+- Detect new appointment confirmations
+- Trigger confetti celebration on booking
+- All events respect settings preferences
+
 ## Technology Stack
 
 - **Framework:** React 18 with TypeScript
@@ -84,8 +130,10 @@ A stunning, production-ready AI Voice Agent Dashboard built with React, TypeScri
 - **Animations:** Framer Motion
 - **Charts:** Recharts
 - **Icons:** Lucide React
-- **State Management:** React Hooks
-- **Data Fetching:** React Query
+- **Notifications:** React Hot Toast + Custom Toast System
+- **Celebrations:** Canvas Confetti
+- **State Management:** React Context + Hooks
+- **Storage:** localStorage for settings persistence
 
 ## Installation
 
