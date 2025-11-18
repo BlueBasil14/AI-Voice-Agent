@@ -2,13 +2,21 @@ import { motion } from 'framer-motion';
 import { Bell, Search, User, ChevronDown } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useState, useEffect } from 'react';
+import { useView } from '../../App';
 
-const tabs = ['Dashboard', 'Calls', 'Appointments', 'Analytics', 'Settings'];
+const tabs = ['Dashboard', 'Recordings', 'Appointments', 'Analytics', 'Settings'];
 
 export function TopNav() {
+  const { setCurrentView } = useView();
   const [activeTab, setActiveTab] = useState(0);
   const [scrolled, setScrolled] = useState(false);
   const [showNotificationDot, setShowNotificationDot] = useState(true);
+
+  const handleTabClick = (index: number) => {
+    setActiveTab(index);
+    if (index === 0) setCurrentView('dashboard');
+    else if (index === 1) setCurrentView('recordings');
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,7 +67,7 @@ export function TopNav() {
             return (
               <button
                 key={tab}
-                onClick={() => setActiveTab(index)}
+                onClick={() => handleTabClick(index)}
                 className={cn(
                   'relative px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-300',
                   'hover:text-text-primary',

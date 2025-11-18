@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, createContext, useContext } from 'react';
 import { DashboardLayout } from './components/layout/DashboardLayout';
 import { QuickStatsBar } from './components/widgets/QuickStatsBar';
 import { CallMetricsCard } from './components/widgets/CallMetricsCard';
@@ -9,6 +9,7 @@ import { RecentActivityFeed } from './components/widgets/RecentActivityFeed';
 import { SettingsPanel } from './components/ui/SettingsPanel';
 import { KeyboardShortcutsHelp } from './components/ui/KeyboardShortcutsHelp';
 import { LoadingScreen } from './components/ui/Skeleton';
+import { CallLibrary } from './components/callRecording/CallLibrary';
 import { getDashboardData, subscribeToUpdates } from './lib/mockData';
 import { celebrateBooking } from './lib/confetti';
 import type { DashboardData } from './types';
@@ -17,11 +18,24 @@ import { ToastProvider, useToast } from './contexts/ToastContext';
 import { SettingsProvider, useSettings } from './contexts/SettingsContext';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
+type ViewType = 'dashboard' | 'recordings';
+
+const ViewContext = createContext<{
+  currentView: ViewType;
+  setCurrentView: (view: ViewType) => void;
+}>({
+  currentView: 'dashboard',
+  setCurrentView: () => {},
+});
+
+export const useView = () => useContext(ViewContext);
+
 function DashboardContent() {
   const [dashboardData, setDashboardData] = useState<DashboardData>(getDashboardData());
   const [isLoading, setIsLoading] = useState(true);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [currentView, setCurrentView] = useState<ViewType>('dashboard');
   const { showToast } = useToast();
   const { settings } = useSettings();
   const prevDataRef = useRef<DashboardData | null>(null);
@@ -122,45 +136,51 @@ function DashboardContent() {
   }
 
   return (
-    <>
+    <ViewContext.Provider value={{ currentView, setCurrentView }}>
       <DashboardLayout>
-        {/* Quick Stats Bar */}
-        <QuickStatsBar />
+        {currentView === 'dashboard' ? (
+          <>
+            {/* Quick Stats Bar */}
+            <QuickStatsBar />
 
-        {/* Main Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
-          {/* Call Metrics */}
-          <motion.div className="animate-stagger-1">
-            <CallMetricsCard data={dashboardData.callMetrics} />
-          </motion.div>
+            {/* Main Dashboard Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
+              {/* Call Metrics */}
+              <motion.div className="animate-stagger-1">
+                <CallMetricsCard data={dashboardData.callMetrics} />
+              </motion.div>
 
-          {/* Booking Metrics */}
-          <motion.div className="animate-stagger-2">
-            <BookingMetricsCard data={dashboardData.bookingMetrics} />
-          </motion.div>
+              {/* Booking Metrics */}
+              <motion.div className="animate-stagger-2">
+                <BookingMetricsCard data={dashboardData.bookingMetrics} />
+              </motion.div>
 
-          {/* Live Activity */}
-          <motion.div className="animate-stagger-3">
-            <LiveActivityTimeline calls={dashboardData.liveActivity} />
-          </motion.div>
-        </div>
+              {/* Live Activity */}
+              <motion.div className="animate-stagger-3">
+                <LiveActivityTimeline calls={dashboardData.liveActivity} />
+              </motion.div>
+            </div>
 
-        {/* Second Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* AI Performance */}
-          <motion.div className="animate-stagger-4">
-            <AIPerformanceMatrix data={dashboardData.aiPerformance} />
-          </motion.div>
+            {/* Second Row */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* AI Performance */}
+              <motion.div className="animate-stagger-4">
+                <AIPerformanceMatrix data={dashboardData.aiPerformance} />
+              </motion.div>
 
-          {/* Recent Activity Feed */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-          >
-            <RecentActivityFeed />
-          </motion.div>
-        </div>
+              {/* Recent Activity Feed */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+              >
+                <RecentActivityFeed />
+              </motion.div>
+            </div>
+          </>
+        ) : (
+          <CallLibrary />
+        )}
       </DashboardLayout>
 
       {/* Settings Panel */}
@@ -182,7 +202,7 @@ function DashboardContent() {
           }, 500)}
         </div>
       )}
-    </>
+    </ViewContext.Provider>
   );
 }
 
